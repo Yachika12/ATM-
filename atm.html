@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNB ATM Demo</title>
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef2f8;
+            color: #182b49
+        }
+
+        header {
+            background: #073779;
+            color: white;
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold
+        }
+
+        header small {
+            display: block;
+            margin-top: 5px;
+            color: #dbe8ff
+        }
+
+        .demo {
+            background: #ffcf40;
+            color: #17305a;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 0 16px
+        }
+
+        h2 {
+            color: #073779;
+            margin-top: 0
+        }
+
+        .notice {
+            background: #fff3cd;
+            border: 1px solid #f2d78b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 3px 14px #172b4910
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 14px 0 7px
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px
+        }
+
+        button {
+            border: 0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            background: #074797;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px
+        }
+
+        button:hover {
+            background: #052e65
+        }
+
+        button.secondary {
+            background: #64748b
+        }
+
+        button.danger {
+            background: #b42318
+        }
+
+        button.full {
+            width: 100%
+        }
+
+        .balance {
+            font-size: 30px;
+            font-weight: bold;
+            color: #087443;
+            margin: 12px 0
+        }
+
+        .muted {
+            color: #66758b;
+            font-size: 13px
+        }
+
+        .status {
+            margin-top: 12px;
+            padding: 11px;
+            border-radius: 6px;
+            background: #eaf2ff;
+            display: none;
+            overflow-wrap: anywhere
+        }
+
+        .status.ok {
+            display: block;
+            background: #e1f7e9;
+            color: #126537
+        }
+
+        .status.err {
+            display: block;
+            background: #ffeded;
+            color: #a21b1b
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 14px
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 11px 6px;
+            border-bottom: 1px solid #e3e8ef
+        }
+
+        th {
+            color: #53647c
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .menu button {
+            margin: 0;
+            min-height: 55px
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #64748b;
+            font-size: 13px
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <div class="logo">🏦 PNB ATM</div>
+            <small>Punjab National Bank — Frontend Demo Project</small>
+        </div>
+        <span class="demo">DEMO MODE ONLY</span>
+    </header>
+
+    <main class="container">
+        <div class="notice">
+            <b>Demo only:</b> This project uses sample accounts in your browser.
+            It is not connected to PNB or any real banking system.
+        </div>
+
+        <div class="grid">
+            <section class="card">
+                <h2>Account Login</h2>
+                <p class="muted">Choose a sample account or enter its account number.</p>
+                <label for="account">Account Number</label>
+                <input id="account" maxlength="12" placeholder="Enter demo account number">
+                <button class="full" onclick="lookupAccount()">Find Account</button>
+                <div id="loginStatus" class="status"></div>
+                <hr style="border:0;border-top:1px solid #e3e8ef;margin:22px 0">
+                <label for="samples">Try a Demo Account</label>
+                <select id="samples" onchange="selectSample()">
+                    <option value="">Select sample account</option>
+                    <option value="123456789">123456789 — Rahul Sharma</option>
+                    <option value="987654321">987654321 — Priya Verma</option>
+                </select>
+                <button class="secondary full" onclick="resetDemo()">Reset Demo Data</button>
+            </section>
+
+            <section class="card">
+                <h2>Customer Details</h2>
+                <p class="muted">Selected demo account information</p>
+                <p><b>Customer:</b> <span id="customer">Not selected</span></p>
+                <p><b>Account:</b> <span id="accountDisplay">—</span></p>
+                <p><b>Account Type:</b> <span id="type">—</span></p>
+                <p><b>Status:</b> <span id="accountStatus">—</span></p>
+                <hr style="border:0;border-top:1px solid #e3e8ef;margin:20px 0">
+                <h3>Available Balance</h3>
+                <div class="balance" id="balance">₹0.00</div>
+                <button onclick="showBalance()" class="full">Balance Enquiry</button>
+                <div id="balanceStatus" class="status"></div>
+            </section>
+
+            <section class="card">
+                <h2>Cash Withdrawal</h2>
+                <p class="muted">Withdraw an amount from the selected demo account.</p>
+                <label for="amount">Amount (₹)</label>
+                <input id="amount" type="number" min="100" step="100" placeholder="Enter amount">
+                <button class="full" onclick="withdraw()">Withdraw Cash</button>
+                <div id="withdrawStatus" class="status"></div>
+            </section>
+
+            <section class="card">
+                <h2>ATM Services</h2>
+                <p class="muted">Select a service to perform a demo action.</p>
+                <div class="menu">
+                    <button onclick="showBalance()">Balance Enquiry</button>
+                    <button onclick="showStatement()">Mini Statement</button>
+                    <button onclick="clearMessages()" class="secondary">Clear Messages</button>
+                    <button onclick="resetDemo()" class="danger">Reset Demo</button>
+                </div>
+                <div id="serviceStatus" class="status"></div>
+            </section>
+        </div>
+
+        <section class="card" style="margin-top:18px">
+            <h2>Mini Statement</h2>
+            <p class="muted">Recent transactions for the selected demo account.</p>
+            <div style="overflow-x:auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date / Time</th>
+                            <th>Transaction</th>
+                            <th>Amount</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions">
+                        <tr>
+                            <td colspan="4">Select a demo account to view transactions.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>PNB ATM UI Demo • Built with HTML, CSS and JavaScript • Not an official banking service</footer>
+
+    <script>
+        const initialAccounts = {
+            "123456789": {
+                name: "Rahul Sharma",
+                type: "Savings Account",
+                balance: 25000,
+                history: []
+            },
+            "987654321": {
+                name: "Priya Verma",
+                type: "Savings Account",
+                balance: 18000,
+                history: []
+            }
+        };
+
+        let accounts = {};
+        let currentAccount = null;
+
+        function cloneInitialData() {
+            accounts = {};
+            for (const number in initialAccounts) {
+                accounts[number] = {
+                    ...initialAccounts[number],
+                    history: [
+                        {
+                            date: new Date().toLocaleString(),
+                            type: "Opening Balance",
+                            amount: 0,
+                            balance: initialAccounts[number].balance
+                        }
+                    ]
+                };
+            }
+        }
+
+        function money(amount) {
+            return "₹" + Number(amount).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function message(id, text, type) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = "status " + type;
+        }
+
+        function lookupAccount() {
+            const number = document.getElementById("account").value.trim();
+            const account = accounts[number];
+
+            if (!account) {
+                currentAccount = null;
+                updateAccountDetails();
+                message("loginStatus", "Account not found. Use one of the sample accounts.", "err");
+                return;
+            }
+
+            currentAccount = number;
+            document.getElementById("samples").value = number;
+            message("loginStatus", "Demo account selected successfully.", "ok");
+            updateAccountDetails();
+        }
+
+        function selectSample() {
+            const number = document.getElementById("samples").value;
+            if (!number) return;
+            document.getElementById("account").value = number;
+            lookupAccount();
+        }
+
+        function updateAccountDetails() {
+            const account = accounts[currentAccount];
+
+            document.getElementById("customer").textContent = account ? account.name : "Not selected";
+            document.getElementById("accountDisplay").textContent = currentAccount || "—";
+            document.getElementById("type").textContent = account ? account.type : "—";
+            document.getElementById("accountStatus").textContent = account ? "Active (Demo)" : "—";
+            document.getElementById("balance").textContent = account ? money(account.balance) : "₹0.00";
+
+            if (account) {
+                renderTransactions();
+            } else {
+                document.getElementById("transactions").innerHTML =
+                    '<tr><td colspan="4">Select a demo account to view transactions.</td></tr>';
+            }
+        }
+
+        function showBalance() {
+            if (!requireAccount()) return;
+            document.getElementById("balance").textContent = money(accounts[currentAccount].balance);
+            message("balanceStatus", "Balance enquiry successful (demo).", "ok");
+            message("serviceStatus", "Your current balance is " + money(accounts[currentAccount].balance), "ok");
+        }
+
+        function withdraw() {
+            if (!requireAccount()) return;
+
+            const amount = Number(document.getElementById("amount").value);
+            const account = accounts[currentAccount];
+
+            if (!Number.isFinite(amount) || amount < 100 || amount % 100 !== 0) {
+                message("withdrawStatus", "Enter a valid amount in multiples of ₹100 (minimum ₹100).", "err");
+                return;
+            }
+
+            if (amount > account.balance) {
+                message("withdrawStatus", "Insufficient demo account balance.", "err");
+                return;
+            }
+
+            account.balance -= amount;
+            account.history.unshift({
+                date: new Date().toLocaleString(),
+                type: "Cash Withdrawal",
+                amount: -amount,
+                balance: account.balance
+            });
+
+            document.getElementById("amount").value = "";
+            updateAccountDetails();
+            message("withdrawStatus", "Withdrawal successful! Amount: " + money(amount), "ok");
+            message("balanceStatus", "Updated balance: " + money(account.balance), "ok");
+        }
+
+        function showStatement() {
+            if (!requireAccount()) return;
+            renderTransactions();
+            message("serviceStatus", "Mini statement updated below.", "ok");
+            document.getElementById("transactions").scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+
+        function renderTransactions() {
+            const account = accounts[currentAccount];
+            const tbody = document.getElementById("transactions");
+
+            if (!account || account.history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">No transactions available.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = account.history.slice(0, 10).map(tx => `
+    <tr>
+      <td>${escapeHTML(tx.date)}</td>
+      <td>${escapeHTML(tx.type)}</td>
+      <td style="color:${tx.amount < 0 ? "#b42318" : "#087443"}">
+        ${tx.amount === 0 ? "—" : (tx.amount < 0 ? "−" : "+") + money(Math.abs(tx.amount))}
+      </td>
+      <td>${money(tx.balance)}</td>
+    </tr>
+  `).join("");
+        }
+
+        function escapeHTML(value) {
+            return String(value).replace(/[&<>"']/g, char => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[char]);
+        }
+
+        function requireAccount() {
+            if (!currentAccount || !accounts[currentAccount]) {
+                message("serviceStatus", "Please select a valid demo account first.", "err");
+                return false;
+            }
+            return true;
+        }
+
+        function clearMessages() {
+            ["loginStatus", "balanceStatus", "withdrawStatus", "serviceStatus"].forEach(id => {
+                const el = document.getElementById(id);
+                el.textContent = "";
+                el.className = "status";
+            });
+        }
+
+        function resetDemo() {
+            cloneInitialData();
+            currentAccount = null;
+            document.getElementById("account").value = "";
+            document.getElementById("samples").value = "";
+            document.getElementById("amount").value = "";
+            clearMessages();
+            updateAccountDetails();
+            message("serviceStatus", "Demo data reset successfully.", "ok");
+        }
+
+        cloneInitialData();
+    </script>
+</body>
+
+</html>
